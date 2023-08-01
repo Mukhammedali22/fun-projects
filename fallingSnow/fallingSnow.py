@@ -1,24 +1,16 @@
 import pygame
 from constants import *
-from Snowflake import Snowflake
-
-running = True
-
-def set_image(path):
-    img =  pygame.image.load(path).convert_alpha()
-    return pygame.transform.scale(img, (SCREEN_WIDTH, SCREEN_HIGHT))
-
-def makeSnow():
-    return [Snowflake() for i in range(SnowflakeCount)] 
+from Snowflake import Snowflake, makeSnow
 
 def main():
-    global screen, clock, running
+    running = True
     pygame.init()
     pygame.display.set_caption("fallingSnow")
     screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HIGHT))
     clock = pygame.time.Clock()
     snow = makeSnow()
-    background = set_image(BACKGROUND)
+    background = pygame.image.load(BACKGROUND).convert_alpha()
+    background = pygame.transform.scale(background, (SCREEN_WIDTH, SCREEN_HIGHT))
     pygame.mixer.music.load(MUSIC)
     pygame.mixer.music.play(-1)
 
@@ -36,4 +28,5 @@ def main():
         clock.tick(FPS)
         pygame.display.update()
 
-main()
+if __name__ == "__main__":
+    main()
