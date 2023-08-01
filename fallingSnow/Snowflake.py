@@ -30,3 +30,6 @@ class Snowflake():
 
     def draw(self, screen):
         pygame.draw.circle(screen, WHITE, (self.x, self.y), self.radius)
+
+def makeSnow():
+    return [Snowflake() for i in range(SnowflakeCount)] 
