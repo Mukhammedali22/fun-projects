@@ -3,10 +3,11 @@ from random import randint
 
 WINDOW_HEIGHT = 600
 WINDOW_WIDTH = 900
-BLOCK_SIZE = 10
+BLOCK_SIZE = 15
 BLOCK_NUMBER_X = WINDOW_WIDTH // BLOCK_SIZE
 BLOCK_NUMBER_Y = WINDOW_HEIGHT // BLOCK_SIZE
-FPS = 3
+FPS = 60
+FPS_game = 5
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
 
@@ -82,39 +83,66 @@ def draw_grid():
             
 def main():
     global SCREEN, CLOCK, IS_RUNNING, IN_PAUSE, IS_STARTED, RANDOM_CONFIG, FIGURE_GRID  
-    config = int(input("do you want random configuration?\n1 - yes 0 - no\n"))
-    if config:
-        RANDOM_CONFIG = True
-        random_configuration()  
-    else:
-        RANDOM_CONFIG = False
+    # config = int(input("do you want random configuration?\n1 - yes 0 - no\n"))
+    # if config:
+    #     RANDOM_CONFIG = True
+    #     random_configuration()  
+    # else:
+    #     RANDOM_CONFIG = False
+
+    random_configuration()  
+
     pygame.init()
     pygame.display.set_caption("life")
     SCREEN = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
     CLOCK = pygame.time.Clock()
     draw_grid()
     
+    left_down = False
+    right_down = False
+    current_fps = FPS
+
     while IS_RUNNING:
         for event in pygame.event.get():
             if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_x):
                 IS_RUNNING = False
             elif event.type == pygame.MOUSEBUTTONDOWN:
-                X, Y = event.pos[0] // BLOCK_SIZE, event.pos[1] // BLOCK_SIZE
-                NEW_GRID[X][Y] = not NEW_GRID[X][Y]
+                if event.button == 1:
+                    left_down = True
+                elif event.button == 3:
+                    right_down = True
+            elif event.type == pygame.MOUSEBUTTONUP:
+                if event.button == 1:
+                    left_down = False
+                elif event.button == 3:
+                    right_down = False
             elif event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN:
                 IS_STARTED = True
+                IN_PAUSE = False
+                current_fps = FPS_game
             elif event.type == pygame.KEYDOWN and event.key == pygame.K_p:
-                IN_PAUSE = not IN_PAUSE
+                if IS_STARTED:
+                    IN_PAUSE = not IN_PAUSE
+                    current_fps = FPS if IN_PAUSE else FPS_game
             elif event.type == pygame.KEYDOWN and event.key == pygame.K_r:
                 IS_STARTED = False
                 IN_PAUSE = False
+                current_fps = FPS
                 clean_grid()
-                if RANDOM_CONFIG:
-                    random_configuration()
+                # if RANDOM_CONFIG:
+                    # random_configuration()
                 draw_grid()
-                # print(*NEW_GRID, sep='\n')
-                
-                
+
+        if left_down or right_down:
+            x, y = pygame.mouse.get_pos()
+            X, Y = x // BLOCK_SIZE, y // BLOCK_SIZE
+            if is_save(X, Y):
+                if left_down:
+                    NEW_GRID[X][Y] = True
+                elif right_down:
+                    NEW_GRID[X][Y] = False
+            draw_grid()
+
         if IS_STARTED:
             if FIGURE_GRID is None:
                 FIGURE_GRID = NEW_GRID 
@@ -124,9 +152,9 @@ def main():
         else:
             if not RANDOM_CONFIG:
                 draw_grid()
-                # customizing grid
                 
         pygame.display.update()
-        CLOCK.tick(FPS)  
+        CLOCK.tick(current_fps)  
+        
         
 main()
