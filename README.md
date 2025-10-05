@@ -1,7 +1,7 @@
 🎮 Fun Projects Collection
 
 
-Welcome to **Fun Projects** — a small collection of creative visual experiments written in JavaScript and HTML5 Canvas.  
+Welcome to **Fun Projects** — a small collection of creative visual experiments written in Python and PyGame.  
 Each mini-project explores simple but engaging ideas in animation and cellular automata.
 
 ---
